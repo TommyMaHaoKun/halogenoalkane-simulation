@@ -35,7 +35,7 @@ export default function ReactionSection({
       <MechanismPlayer mechanism={mechanism} accent={accent} />
 
       {/* legend */}
-      <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--color-ink-soft)]">
+      <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px] text-[var(--color-ink-soft)]">
         <span className="flex items-center gap-2">
           <svg width="26" height="10">
             <path
@@ -82,7 +82,7 @@ export default function ReactionSection({
       </div>
 
       {note && (
-        <p className="mt-5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-mist)] px-5 py-4 text-sm leading-relaxed text-[var(--color-ink-soft)]">
+        <p className="mt-5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-mist)] px-5 py-4 text-base leading-relaxed text-[var(--color-ink-soft)]">
           {note}
         </p>
       )}

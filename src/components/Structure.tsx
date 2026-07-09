@@ -12,7 +12,7 @@ function DisplayedFormula() {
     x: number,
     y: number,
     t: string,
-    fill = "#1d1d1f"
+    fill = "var(--color-ink)"
   ) => (
     <text
       x={x}
@@ -87,7 +87,7 @@ export default function Structure() {
               <Molecule3D mol={STAGES[stage].molecule} />
             </Suspense>
           </div>
-          <div className="flex items-center justify-between border-t border-[var(--color-hairline)] bg-white px-4 py-3">
+          <div className="flex items-center justify-between border-t border-[var(--color-hairline)] bg-[var(--color-surface)] px-4 py-3">
             <div className="text-sm">
               <span className="font-semibold">{STAGES[stage].molecule.name}</span>
               <span className="ml-2 text-[var(--color-ink-soft)]">
@@ -101,9 +101,9 @@ export default function Structure() {
                   onClick={() => setStage(k)}
                   className="rounded-full px-3 py-1 text-xs transition"
                   style={{
-                    background: stage === k ? "white" : "transparent",
+                    background: stage === k ? "var(--color-surface)" : "transparent",
                     fontWeight: stage === k ? 600 : 400,
-                    boxShadow: stage === k ? "0 1px 2px rgba(0,0,0,0.08)" : "none",
+                    boxShadow: stage === k ? "0 1px 3px rgba(0,0,0,0.18)" : "none",
                   }}
                 >
                   {s.molecule.name}

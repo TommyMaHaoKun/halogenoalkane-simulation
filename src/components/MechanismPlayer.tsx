@@ -67,7 +67,7 @@ function AtomNode({ atom }: { atom: SAtom }) {
           y={-16}
           fontSize={13}
           fontWeight={600}
-          fill="#1d1d1f"
+          fill="var(--color-ink)"
         >
           {atom.charge}
         </text>
@@ -86,7 +86,7 @@ function AtomNode({ atom }: { atom: SAtom }) {
             const ox = Math.cos(ang + Math.PI / 2) * 4;
             const oy = Math.sin(ang + Math.PI / 2) * 4;
             return (
-              <g key={i} fill="#1d1d1f">
+              <g key={i} fill="var(--color-ink)">
                 <circle cx={cx - ox} cy={cy - oy} r={2.4} />
                 <circle cx={cx + ox} cy={cy + oy} r={2.4} />
               </g>
@@ -194,7 +194,7 @@ export default function MechanismPlayer({
   const atLast = i === steps.length - 1;
 
   return (
-    <div className="rounded-2xl border border-[var(--color-hairline)] bg-white overflow-hidden">
+    <div className="rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-surface)] overflow-hidden">
       {/* phase + progress */}
       <div className="flex items-center justify-between px-5 sm:px-7 pt-5">
         <span
@@ -268,16 +268,16 @@ export default function MechanismPlayer({
       </div>
 
       {/* caption */}
-      <div className="px-5 sm:px-7 pb-1 min-h-[92px]">
-        <h4 className="text-base font-semibold text-[var(--color-ink)]">
+      <div className="px-5 sm:px-7 pb-1 min-h-[104px]">
+        <h4 className="text-lg font-semibold text-[var(--color-ink)]">
           {step.title}
         </h4>
         {step.equation && (
-          <p className="mt-1 font-mono text-[13px] text-[var(--color-ink)]">
+          <p className="mt-1.5 font-mono text-sm text-[var(--color-ink)]">
             {step.equation}
           </p>
         )}
-        <p className="mt-1 text-sm leading-relaxed text-[var(--color-ink-soft)]">
+        <p className="mt-1.5 text-base leading-relaxed text-[var(--color-ink-soft)]">
           {step.caption}
         </p>
       </div>

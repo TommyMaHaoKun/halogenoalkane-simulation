@@ -19,7 +19,7 @@ export default function Hero() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.05 }}
-        className="mt-5 text-6xl font-semibold tracking-tight sm:text-8xl"
+        className="mt-5 font-display text-6xl font-semibold tracking-tight sm:text-8xl"
       >
         Chloroethane
       </motion.h1>
@@ -28,7 +28,7 @@ export default function Hero() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.12 }}
-        className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--color-ink-soft)] sm:text-xl"
+        className="mt-6 max-w-2xl text-xl leading-relaxed text-[var(--color-ink-soft)] sm:text-2xl"
       >
         One small halogenoalkane, understood through the two reactions that
         define it — how it is <span className="text-[var(--color-ink)]">made</span> by

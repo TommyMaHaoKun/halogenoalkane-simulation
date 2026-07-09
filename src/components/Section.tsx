@@ -34,11 +34,11 @@ export function Section({
               {eyebrow}
             </p>
           )}
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
             {title}
           </h2>
           {lead && (
-            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--color-ink-soft)]">
+            <p className="mt-4 max-w-2xl text-xl leading-relaxed text-[var(--color-ink-soft)]">
               {lead}
             </p>
           )}

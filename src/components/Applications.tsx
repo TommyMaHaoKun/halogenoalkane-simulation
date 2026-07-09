@@ -20,8 +20,8 @@ export default function Applications() {
             transition={{ duration: 0.5, delay: i * 0.08 }}
             className="rounded-2xl border border-[var(--color-hairline)] p-6"
           >
-            <h3 className="text-lg font-semibold">{a.title}</h3>
-            <p className="mt-3 text-sm leading-relaxed text-[var(--color-ink-soft)]">
+            <h3 className="text-xl font-semibold">{a.title}</h3>
+            <p className="mt-3 text-base leading-relaxed text-[var(--color-ink-soft)]">
               {a.text}
             </p>
           </motion.div>

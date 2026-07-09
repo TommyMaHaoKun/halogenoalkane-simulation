@@ -26,13 +26,13 @@ function Question({
           {String(index + 1).padStart(2, "0")}
         </span>
         <div className="flex-1">
-          <p className="font-medium">{q}</p>
+          <p className="text-lg font-medium">{q}</p>
           <div className="mt-4 grid gap-2">
             {options.map((opt, i) => {
               const isAnswer = i === answer;
               const isPicked = i === picked;
               let border = "var(--color-hairline)";
-              let bg = "white";
+              let bg = "var(--color-surface)";
               if (done && isAnswer) {
                 border = "#3ba55d";
                 bg = "rgba(59,165,93,0.08)";
@@ -45,7 +45,7 @@ function Question({
                   key={i}
                   disabled={done}
                   onClick={() => setPicked(i)}
-                  className="flex items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition disabled:cursor-default"
+                  className="flex items-center justify-between rounded-xl border px-4 py-3 text-left text-base transition disabled:cursor-default"
                   style={{ borderColor: border, background: bg }}
                 >
                   <span>{opt}</span>
@@ -58,7 +58,7 @@ function Question({
             })}
           </div>
           {done && (
-            <p className="mt-4 text-sm leading-relaxed text-[var(--color-ink-soft)]">
+            <p className="mt-4 text-base leading-relaxed text-[var(--color-ink-soft)]">
               <span
                 className="font-semibold"
                 style={{ color: correct ? "#3ba55d" : "#e5484d" }}

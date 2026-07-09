@@ -28,7 +28,7 @@ export default function Footer() {
               <span className="flex h-7 w-7 flex-none items-center justify-center rounded-full bg-[var(--color-accent)] text-sm font-semibold text-white">
                 {i + 1}
               </span>
-              <p className="text-sm leading-relaxed text-[var(--color-ink-soft)]">
+              <p className="text-base leading-relaxed text-[var(--color-ink-soft)]">
                 {s}
               </p>
             </li>
@@ -46,7 +46,7 @@ export default function Footer() {
                   href={r.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sm text-[var(--color-accent)] hover:underline"
+                  className="text-base text-[var(--color-accent)] hover:underline"
                 >
                   {r.label} ↗
                 </a>
@@ -56,7 +56,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="mt-16 border-t border-[var(--color-hairline)] pt-8 text-center text-xs text-[var(--color-ink-soft)]">
+      <div className="mt-16 border-t border-[var(--color-hairline)] pt-8 text-center text-sm text-[var(--color-ink-soft)]">
         Built for IB Chemistry SL · Reactivity 3.3 (electron sharing) &amp; 3.4
         (electron-pair sharing). The detailed SN1/SN2 mechanism is HL and is not
         shown; the electron movement here is for understanding.

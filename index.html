@@ -8,6 +8,21 @@
       content="An interactive IB Chemistry SL study of chloroethane — a halogenoalkane. Simulate radical substitution (Reactivity 3.3) and nucleophilic substitution (Reactivity 3.4)."
     />
     <title>Chloroethane · A Halogenoalkane</title>
+    <script>
+      // Set the theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          var prefersDark =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme = saved || (prefersDark ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -19,13 +19,13 @@ export default function Properties() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: i * 0.05 }}
-            className="bg-white p-6"
+            className="bg-[var(--color-surface)] p-6"
           >
             <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-ink-soft)]">
               {p.label}
             </p>
             <p className="mt-2 text-2xl font-semibold tracking-tight">{p.value}</p>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--color-ink-soft)]">
+            <p className="mt-2 text-base leading-relaxed text-[var(--color-ink-soft)]">
               {p.note}
             </p>
           </motion.div>
