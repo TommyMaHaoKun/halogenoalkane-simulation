@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design tokens — restrained, Apple-like. One neutral scale, one accent.
+   Element colours follow the CPK convention (scientific standard).
+--------------------------------------------------------------------------- */
+@theme {
+  --font-sans: "SF Pro Display", "SF Pro Text", -apple-system,
+    BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Roboto, sans-serif;
+
+  --color-ink: #1d1d1f; /* primary text */
+  --color-ink-soft: #6e6e73; /* secondary text */
+  --color-hairline: #d2d2d7; /* dividers */
+  --color-canvas: #ffffff;
+  --color-mist: #f5f5f7; /* section wash */
+  --color-accent: #0071e3; /* single accent (system blue) */
+
+  /* CPK element colours */
+  --el-c: #3a3a3c; /* carbon  — dark grey */
+  --el-h: #f2f2f4; /* hydrogen — near white */
+  --el-cl: #3ba55d; /* chlorine — green */
+  --el-o: #e5484d; /* oxygen  — red */
+  --el-e: #f5a623; /* highlighted electron — amber */
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+}
+
+/* Thin, quiet scrollbar to match the aesthetic */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #c7c7cc;
+  border-radius: 999px;
+  border: 3px solid var(--color-canvas);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+}
