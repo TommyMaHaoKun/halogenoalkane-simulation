@@ -6,11 +6,10 @@
    Element colours follow the CPK convention (scientific standard).
 --------------------------------------------------------------------------- */
 @theme {
-  /* SF Pro — installed locally; Text for body, Display for large headings. */
-  --font-sans: "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont,
-    "Helvetica Neue", "Segoe UI", Roboto, sans-serif;
-  --font-display: "SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont,
-    "Helvetica Neue", "Segoe UI", Roboto, sans-serif;
+  /* Monaco — monospace throughout, with close fallbacks. */
+  --font-sans: Monaco, Menlo, "SF Mono", Consolas, "Courier New", monospace;
+  --font-display: Monaco, Menlo, "SF Mono", Consolas, "Courier New", monospace;
+  --font-mono: Monaco, Menlo, "SF Mono", Consolas, "Courier New", monospace;
 
   --color-ink: #1d1d1f; /* primary text */
   --color-ink-soft: #6e6e73; /* secondary text */
@@ -42,7 +41,7 @@
 }
 
 html {
-  font-size: 18px; /* larger base — every rem-sized element scales up */
+  font-size: 16px; /* base size — every rem-sized element scales from this */
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;

@@ -38,7 +38,7 @@ export function Section({
             {title}
           </h2>
           {lead && (
-            <p className="mt-4 max-w-2xl text-xl leading-relaxed text-[var(--color-ink-soft)]">
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--color-ink-soft)]">
               {lead}
             </p>
           )}

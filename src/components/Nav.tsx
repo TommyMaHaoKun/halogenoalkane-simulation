@@ -81,12 +81,12 @@ export default function Nav() {
           C₂H₅Cl
         </a>
         <div className="flex items-center gap-6">
-          <ul className="hidden gap-7 sm:flex">
+          <ul className="hidden gap-6 md:flex">
             {LINKS.map((l) => (
               <li key={l.href}>
                 <a
                   href={l.href}
-                  className="text-sm text-[var(--color-ink-soft)] hover:text-[var(--color-ink)] transition-colors"
+                  className="text-[13px] text-[var(--color-ink-soft)] hover:text-[var(--color-ink)] transition-colors"
                 >
                   {l.label}
                 </a>
