@@ -1,46 +1,51 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { springUI, fadeOnly } from "../lib/motion";
 
 export default function Hero() {
+  const reduced = useReducedMotion();
+  const rise = (delay: number) => ({
+    initial: { opacity: 0, y: reduced ? 0 : 14 },
+    animate: { opacity: 1, y: 0 },
+    transition: reduced ? fadeOnly : { ...springUI, delay },
+  });
+
   return (
     <section
       id="top"
-      className="relative flex min-h-[92vh] flex-col items-center justify-center px-6 text-center"
+      className="relative flex min-h-[88svh] flex-col items-center justify-center px-6 text-center"
     >
-      <motion.h1
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        className="font-display text-4xl font-semibold tracking-tight sm:text-7xl"
-      >
+      <motion.h1 {...rise(0)} className="type-display max-w-4xl">
         Chloroethane
       </motion.h1>
 
       <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.12 }}
-        className="mt-6 max-w-2xl text-base leading-relaxed text-[var(--color-ink-soft)] sm:text-lg"
+        {...rise(0.06)}
+        className="type-lead mt-6 max-w-xl text-[var(--color-ink-soft)]"
       >
         One small halogenoalkane, understood through the two reactions that
-        define it — how it is <span className="text-[var(--color-ink)]">made</span> by
-        electron sharing, and how it <span className="text-[var(--color-ink)]">reacts</span> by
+        define it — how it is{" "}
+        <span className="font-bold text-[var(--color-ink)]">made</span> by
+        electron sharing, and how it{" "}
+        <span className="font-bold text-[var(--color-ink)]">reacts</span> by
         electron-pair sharing.
       </motion.p>
 
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.25 }}
-        className="mt-10 flex items-center gap-3 text-sm"
+        {...rise(0.12)}
+        className="mt-9 flex flex-wrap items-center justify-center gap-2.5"
       >
-        <span className="rounded-full border border-[var(--color-hairline)] px-4 py-1.5 text-[var(--color-ink-soft)]">
-          C₂H₅Cl
-        </span>
+        <a
+          href="#formation"
+          className="pressable type-caption rounded-full px-5 py-2.5 font-bold text-white"
+          style={{ background: "var(--color-accent)" }}
+        >
+          See it form
+        </a>
         <a
           href="#structure"
-          className="rounded-full bg-[var(--color-accent)] px-5 py-1.5 font-medium text-white transition hover:opacity-90"
+          className="pressable type-caption rounded-full border border-[var(--color-hairline)] px-5 py-2.5 text-[var(--color-ink)] hover:bg-[var(--color-mist)]"
         >
-          Explore ↓
+          Explore the molecule
         </a>
       </motion.div>
     </section>

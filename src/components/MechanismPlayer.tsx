@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { Mechanism, SAtom, Step } from "../lib/mechanism";
 import { arc, arcLength } from "../lib/svg";
+import { springUI, springSnap, fadeOnly } from "../lib/motion";
 
 const FILL: Record<SAtom["el"], string> = {
   C: "#3a3a3c",
@@ -27,7 +28,7 @@ function atomWidth(label: string): number {
   return 30 + label.length * 12;
 }
 
-function AtomNode({ atom }: { atom: SAtom }) {
+function AtomNode({ atom, reduced }: { atom: SAtom; reduced: boolean | null }) {
   const w = atomWidth(atom.label);
   const isPill = atom.label.length > 2;
   const rx = isPill ? 17 : w / 2;
@@ -36,7 +37,7 @@ function AtomNode({ atom }: { atom: SAtom }) {
       initial={{ opacity: 0, x: atom.x, y: atom.y }}
       animate={{ opacity: 1, x: atom.x, y: atom.y }}
       exit={{ opacity: 0 }}
-      transition={{ type: "spring", stiffness: 120, damping: 20 }}
+      transition={reduced ? fadeOnly : springUI}
     >
       {isPill ? (
         <rect
@@ -53,8 +54,9 @@ function AtomNode({ atom }: { atom: SAtom }) {
       <text
         textAnchor="middle"
         dominantBaseline="central"
-        fontSize={16}
-        fontWeight={550}
+        fontSize={15}
+        fontWeight={700}
+        letterSpacing="-0.02em"
         fill={TEXT_ON[atom.el]}
       >
         {atom.label}
@@ -66,7 +68,7 @@ function AtomNode({ atom }: { atom: SAtom }) {
           x={w / 2 - 2}
           y={-16}
           fontSize={13}
-          fontWeight={600}
+          fontWeight={700}
           fill="var(--color-ink)"
         >
           {atom.charge}
@@ -101,10 +103,12 @@ function BondLine({
   a,
   b,
   state,
+  reduced,
 }: {
   a: SAtom;
   b: SAtom;
   state?: string;
+  reduced: boolean | null;
 }) {
   const breaking = state === "breaking";
   const forming = state === "forming";
@@ -124,8 +128,8 @@ function BondLine({
         y2: b.y,
         opacity: breaking ? 0.4 : 1,
       }}
-      transition={{ duration: 0.5 }}
-      stroke={breaking ? "#e5484d" : "#8a8a8f"}
+      transition={reduced ? fadeOnly : springUI}
+      stroke={breaking ? "var(--color-fail)" : "var(--color-ink-faint)"}
       strokeWidth={3}
       strokeDasharray={breaking ? "5 5" : "0"}
       strokeLinecap="round"
@@ -133,11 +137,17 @@ function BondLine({
   );
 }
 
-function ArrowPath({ arrow }: { arrow: NonNullable<Step["arrows"]>[number] }) {
+function ArrowPath({
+  arrow,
+  reduced,
+}: {
+  arrow: NonNullable<Step["arrows"]>[number];
+  reduced: boolean | null;
+}) {
   const d = arc(arrow.from[0], arrow.from[1], arrow.to[0], arrow.to[1], arrow.bend);
   const len = arcLength(arrow.from[0], arrow.from[1], arrow.to[0], arrow.to[1], arrow.bend);
   const curly = arrow.kind === "curly";
-  const color = curly ? "#0071e3" : "#f5a623";
+  const color = curly ? "var(--color-accent)" : "#f5a623";
   return (
     <motion.path
       d={d}
@@ -146,16 +156,24 @@ function ArrowPath({ arrow }: { arrow: NonNullable<Step["arrows"]>[number] }) {
       strokeWidth={2.4}
       strokeLinecap="round"
       markerEnd={`url(#${curly ? "head-full" : "head-half"})`}
-      initial={{ strokeDasharray: len, strokeDashoffset: len, opacity: 0 }}
+      initial={{
+        strokeDasharray: len,
+        strokeDashoffset: reduced ? 0 : len,
+        opacity: 0,
+      }}
       animate={{ strokeDashoffset: 0, opacity: 1 }}
-      transition={{ duration: 0.7, delay: 0.35, ease: "easeInOut" }}
+      transition={
+        reduced
+          ? fadeOnly
+          : { duration: 0.65, delay: 0.3, ease: [0.33, 0, 0.15, 1] }
+      }
     />
   );
 }
 
 export default function MechanismPlayer({
   mechanism,
-  accent = "#0071e3",
+  accent = "var(--color-accent)",
 }: {
   mechanism: Mechanism;
   accent?: string;
@@ -165,6 +183,8 @@ export default function MechanismPlayer({
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const timer = useRef<number | null>(null);
+  const reduced = useReducedMotion();
+  const uid = useId(); // keeps layout animations scoped to this player
 
   const step = steps[i];
   const atomById = useMemo(() => {
@@ -194,27 +214,24 @@ export default function MechanismPlayer({
   const atLast = i === steps.length - 1;
 
   return (
-    <div className="rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-surface)] overflow-hidden">
+    <div className="card overflow-hidden">
       {/* phase + progress */}
-      <div className="flex items-center justify-between px-5 sm:px-7 pt-5">
-        <span
-          className="text-xs font-semibold uppercase tracking-widest"
-          style={{ color: accent }}
-        >
+      <div className="flex items-center justify-between px-5 pt-5 sm:px-7">
+        <span className="type-label" style={{ color: accent }}>
           {step.phase}
         </span>
-        <span className="text-xs text-[var(--color-ink-soft)] tabular-nums">
+        <span className="type-caption tnum text-[var(--color-ink-faint)]">
           {i + 1} / {steps.length}
         </span>
       </div>
 
       {/* stage */}
-      <div className="px-2 sm:px-5">
+      <div className="px-1 sm:px-4">
         <svg
           viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-          className="w-full h-auto"
+          className="h-auto w-full"
           role="img"
-          aria-label={step.title}
+          aria-label={`${step.phase}: ${step.title}`}
         >
           <defs>
             <marker
@@ -225,7 +242,7 @@ export default function MechanismPlayer({
               refY="4.5"
               orient="auto"
             >
-              <path d="M0,0 L9,4.5 L0,9 Z" fill="#0071e3" />
+              <path d="M0,0 L9,4.5 L0,9 Z" fill="var(--color-accent)" />
             </marker>
             <marker
               id="head-half"
@@ -245,7 +262,13 @@ export default function MechanismPlayer({
             const c = atomById.get(b.b);
             if (!a || !c) return null;
             return (
-              <BondLine key={`${b.a}-${b.b}`} a={a} b={c} state={b.state} />
+              <BondLine
+                key={`${b.a}-${b.b}`}
+                a={a}
+                b={c}
+                state={b.state}
+                reduced={reduced}
+              />
             );
           })}
 
@@ -253,7 +276,7 @@ export default function MechanismPlayer({
           <AnimatePresence mode="wait">
             <g key={`arrows-${i}`}>
               {step.arrows?.map((ar) => (
-                <ArrowPath key={ar.id} arrow={ar} />
+                <ArrowPath key={ar.id} arrow={ar} reduced={reduced} />
               ))}
             </g>
           </AnimatePresence>
@@ -261,33 +284,44 @@ export default function MechanismPlayer({
           {/* atoms */}
           <AnimatePresence>
             {step.atoms.map((a) => (
-              <AtomNode key={a.id} atom={a} />
+              <AtomNode key={a.id} atom={a} reduced={reduced} />
             ))}
           </AnimatePresence>
         </svg>
       </div>
 
-      {/* caption */}
-      <div className="px-5 sm:px-7 pb-1 min-h-[104px]">
-        <h4 className="text-lg font-semibold text-[var(--color-ink)]">
-          {step.title}
-        </h4>
-        {step.equation && (
-          <p className="mt-1.5 font-mono text-sm text-[var(--color-ink)]">
-            {step.equation}
+      {/* caption — fixed height so controls never shift as text changes */}
+      {/* Keyed so it re-mounts and fades in per step. Deliberately NOT wrapped
+          in AnimatePresence — nothing needs to animate out, and `mode="wait"`
+          would stall the swap behind the previous caption's exit. */}
+      <div className="min-h-[112px] px-5 pb-2 sm:px-7">
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: reduced ? 0 : 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={reduced ? fadeOnly : springSnap}
+        >
+          <h4 className="type-heading">{step.title}</h4>
+          {step.equation && (
+            <p
+              className="type-caption mt-1.5 inline-block rounded-md px-2 py-1 font-bold"
+              style={{ background: "var(--color-mist)" }}
+            >
+              {step.equation}
+            </p>
+          )}
+          <p className="type-body mt-1.5 text-[var(--color-ink-soft)]">
+            {step.caption}
           </p>
-        )}
-        <p className="mt-1.5 text-base leading-relaxed text-[var(--color-ink-soft)]">
-          {step.caption}
-        </p>
+        </motion.div>
       </div>
 
       {/* controls */}
-      <div className="flex items-center gap-1 border-t border-[var(--color-hairline)] px-4 sm:px-6 py-3">
+      <div className="flex items-center gap-1 border-t border-[var(--color-hairline)] px-3 py-3 sm:px-5">
         <button
           onClick={prev}
           disabled={i === 0}
-          className="rounded-full px-3 py-1.5 text-sm text-[var(--color-ink)] disabled:opacity-30 hover:bg-[var(--color-mist)] transition"
+          className="pressable type-caption rounded-full px-3 py-1.5 hover:bg-[var(--color-mist)] disabled:opacity-30"
         >
           ‹ Back
         </button>
@@ -298,7 +332,7 @@ export default function MechanismPlayer({
               setPlaying(true);
             } else setPlaying((p) => !p);
           }}
-          className="rounded-full px-4 py-1.5 text-sm font-semibold text-white transition"
+          className="pressable type-caption rounded-full px-4 py-1.5 font-bold text-white"
           style={{ background: accent }}
         >
           {atLast ? "Replay" : playing ? "Pause" : "Play"}
@@ -306,24 +340,31 @@ export default function MechanismPlayer({
         <button
           onClick={next}
           disabled={atLast}
-          className="rounded-full px-3 py-1.5 text-sm text-[var(--color-ink)] disabled:opacity-30 hover:bg-[var(--color-mist)] transition"
+          className="pressable type-caption rounded-full px-3 py-1.5 hover:bg-[var(--color-mist)] disabled:opacity-30"
         >
           Next ›
         </button>
 
-        <div className="ml-auto flex items-center gap-2 text-xs text-[var(--color-ink-soft)]">
-          <span>Speed</span>
+        <div className="type-caption ml-auto flex items-center gap-0.5 text-[var(--color-ink-faint)]">
           {[0.5, 1, 2].map((s) => (
             <button
               key={s}
               onClick={() => setSpeed(s)}
-              className="rounded-full px-2 py-1 tabular-nums transition"
+              aria-label={`${s}× speed`}
+              className="pressable tnum relative rounded-full px-2 py-1"
               style={{
-                background: speed === s ? "var(--color-mist)" : "transparent",
                 color: speed === s ? "var(--color-ink)" : undefined,
-                fontWeight: speed === s ? 600 : 400,
+                fontWeight: speed === s ? 700 : 400,
               }}
             >
+              {speed === s && (
+                <motion.span
+                  layoutId={`speed-${uid}`}
+                  transition={springSnap}
+                  className="absolute inset-0 -z-10 rounded-full"
+                  style={{ background: "var(--color-mist)" }}
+                />
+              )}
               {s}×
             </button>
           ))}
@@ -331,20 +372,25 @@ export default function MechanismPlayer({
       </div>
 
       {/* step rail */}
-      <div className="flex gap-1.5 px-6 pb-4">
-        {steps.map((_, k) => (
+      <div className="flex gap-1 px-5 pb-4 sm:px-7">
+        {steps.map((s, k) => (
           <button
             key={k}
-            aria-label={`Step ${k + 1}`}
+            aria-label={`Step ${k + 1}: ${s.title}`}
+            title={s.phase}
             onClick={() => {
               setPlaying(false);
               setI(k);
             }}
-            className="h-1 flex-1 rounded-full transition"
-            style={{
-              background: k <= i ? accent : "var(--color-hairline)",
-            }}
-          />
+            className="pressable-subtle h-4 flex-1"
+          >
+            <span
+              className="block h-1 w-full rounded-full transition-colors duration-300"
+              style={{
+                background: k <= i ? accent : "var(--color-hairline)",
+              }}
+            />
+          </button>
         ))}
       </div>
     </div>

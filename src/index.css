@@ -1,49 +1,98 @@
 @import "tailwindcss";
 
-/* ---------------------------------------------------------------------------
-   Design tokens — restrained, Apple-like. One neutral scale, one accent.
-   Colours are theme-aware: light defaults here, dark overrides below.
-   Element colours follow the CPK convention (scientific standard).
---------------------------------------------------------------------------- */
-@theme {
-  /* Monaco — monospace throughout, with close fallbacks. */
-  --font-sans: Monaco, Menlo, "SF Mono", Consolas, "Courier New", monospace;
-  --font-display: Monaco, Menlo, "SF Mono", Consolas, "Courier New", monospace;
-  --font-mono: Monaco, Menlo, "SF Mono", Consolas, "Courier New", monospace;
+/* ===========================================================================
+   Design system
+   Type, colour, material and depth tokens. Nothing here is arbitrary:
+   tracking is size-specific, materials encode hierarchy, and every
+   accessibility preference has a defined fallback.
+   =========================================================================== */
 
+@theme {
+  /* --- Typeface -----------------------------------------------------------
+     Monaco throughout — a monospaced face reads as instrument/lab notation,
+     which suits scientific data. Fallbacks are the closest metric matches. */
+  --font-sans: Monaco, Menlo, "SF Mono", Consolas, "Liberation Mono", monospace;
+  --font-display: Monaco, Menlo, "SF Mono", Consolas, "Liberation Mono",
+    monospace;
+  --font-mono: Monaco, Menlo, "SF Mono", Consolas, "Liberation Mono", monospace;
+
+  /* --- Colour: light ----------------------------------------------------- */
   --color-ink: #1d1d1f; /* primary text */
   --color-ink-soft: #6e6e73; /* secondary text */
-  --color-hairline: #d2d2d7; /* dividers */
-  --color-canvas: #ffffff; /* page background */
-  --color-surface: #ffffff; /* card background */
-  --color-mist: #f5f5f7; /* section wash */
-  --color-glass: rgba(255, 255, 255, 0.72); /* sticky nav */
-  --color-accent: #0071e3; /* single accent (system blue) */
+  --color-ink-faint: #8e8e93; /* tertiary / labels */
+  --color-hairline: #e0e0e5; /* dividers, resting borders */
+  --color-canvas: #ffffff; /* page */
+  --color-surface: #ffffff; /* raised card */
+  --color-mist: #f5f5f7; /* recessed wash */
+  --color-accent: #0071e3;
+  --color-accent-soft: rgba(0, 113, 227, 0.1);
 
-  /* CPK element colours (theme-independent) */
+  /* Semantic (chemistry states) */
+  --color-pass: #248a3d;
+  --color-fail: #d70015;
+  --color-warm: #b25000;
+
+  /* CPK element colours — scientific convention, theme-independent */
   --el-c: #3a3a3c;
   --el-h: #e9e9ee;
   --el-cl: #3ba55d;
   --el-o: #e5484d;
   --el-e: #f5a623;
+
+  /* --- Material (translucent chrome) ------------------------------------- */
+  --mat-chrome: rgba(255, 255, 255, 0.72);
+  --mat-blur: 20px;
+  --mat-edge: rgba(255, 255, 255, 0.6); /* bright top edge: light catching it */
+
+  /* --- Depth ------------------------------------------------------------- */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-raised: 0 2px 6px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.08);
+  --shadow-chip: 0 1px 3px rgba(0, 0, 0, 0.12);
+
+  --radius-card: 18px;
+  --radius-inner: 12px;
 }
 
-/* Dark theme — higher specificity than :root, so it wins when toggled. */
+/* --- Colour: dark ---------------------------------------------------------
+   Not an inversion. Surfaces lift away from a true-black canvas by getting
+   lighter, and the accent brightens to hold contrast against dark. */
 :root[data-theme="dark"] {
+  color-scheme: dark; /* native form controls & scrollbars follow the theme */
   --color-ink: #f5f5f7;
-  --color-ink-soft: #98989d;
-  --color-hairline: #38383a;
+  --color-ink-soft: #a1a1a6;
+  --color-ink-faint: #8e8e93;
+  --color-hairline: #2c2c2e;
   --color-canvas: #000000;
-  --color-surface: #1c1c1e;
-  --color-mist: #0c0c0d;
-  --color-glass: rgba(0, 0, 0, 0.6);
-  --color-accent: #2997ff; /* brighter blue for dark backgrounds */
+  --color-surface: #141416;
+  --color-mist: #0a0a0b;
+  --color-accent: #2997ff;
+  --color-accent-soft: rgba(41, 151, 255, 0.16);
+
+  --color-pass: #30d158;
+  --color-fail: #ff453a;
+  --color-warm: #ff9f0a;
+
+  --mat-chrome: rgba(22, 22, 24, 0.72);
+  --mat-edge: rgba(255, 255, 255, 0.08);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-raised: 0 2px 8px rgba(0, 0, 0, 0.6), 0 16px 40px rgba(0, 0, 0, 0.5);
+  --shadow-chip: 0 1px 4px rgba(0, 0, 0, 0.6);
 }
+
+/* ===========================================================================
+   Base
+   =========================================================================== */
 
 html {
-  font-size: 16px; /* base size — every rem-sized element scales from this */
+  font-size: 16px;
+  /* Paint the canvas here too, so it never relies on body-background
+     propagation (and overscroll areas stay the right colour). */
+  background: var(--color-canvas);
+  color-scheme: light;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
@@ -52,21 +101,193 @@ body {
   background: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  letter-spacing: -0.01em;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.5;
+  /* Ease the theme switch — abrupt brightness jumps are jarring (§14) */
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
-/* Thin, quiet scrollbar to match the aesthetic */
+/* --- Optical typography ---------------------------------------------------
+   Tracking is size-specific: large text tightens, small text opens up.
+   Leading runs inversely to size. (§15) */
+
+.type-display {
+  font-size: clamp(2.25rem, 7vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-weight: 700;
+}
+
+.type-title {
+  font-size: clamp(1.5rem, 3.2vw, 2.125rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+.type-heading {
+  font-size: 1.0625rem;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+.type-lead {
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+}
+
+.type-body {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  letter-spacing: 0;
+}
+
+/* Small text needs positive tracking to stay legible */
+.type-caption {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.type-label {
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Tabular figures keep numeric readouts from shifting as they change */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===========================================================================
+   Components
+   =========================================================================== */
+
+/* Translucent floating chrome — content scrolls underneath (§12) */
+.material-chrome {
+  background: var(--mat-chrome);
+  backdrop-filter: blur(var(--mat-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--mat-blur)) saturate(180%);
+}
+
+/* Raised card. Border catches light at the top edge like a real material. */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* Scroll-edge fade instead of a hard 1px rule under floating chrome (§12) */
+.scroll-edge::after {
+  content: "";
+  position: absolute;
+  inset: 100% 0 auto 0;
+  height: 14px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-canvas),
+    transparent
+  );
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* --- Press feedback -------------------------------------------------------
+   Fires on pointer-down, not release, and it is instant (§1). */
+.pressable {
+  transition: transform 110ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    background-color 160ms ease, color 160ms ease, border-color 160ms ease,
+    opacity 160ms ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.pressable:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.pressable-subtle:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+/* Focus is visible for keyboards, quiet for pointers */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Quiet scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: var(--color-hairline);
   border-radius: 999px;
   border: 3px solid var(--color-canvas);
 }
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-faint);
+}
 
 ::selection {
-  background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  background: var(--color-accent-soft);
+}
+
+/* ===========================================================================
+   Accessibility preferences — each has a defined fallback (§14)
+   =========================================================================== */
+
+/* Gentler, non-vestibular equivalent — cross-fade rather than travel */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.15s !important;
+  }
+  .pressable:active:not(:disabled),
+  .pressable-subtle:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Frostier and solid instead of translucent */
+@media (prefers-reduced-transparency: reduce) {
+  .material-chrome {
+    background: var(--color-canvas);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* Near-solid surfaces with defined, contrasting borders */
+@media (prefers-contrast: more) {
+  :root {
+    --color-ink-soft: #3a3a3c;
+    --color-hairline: #8e8e93;
+  }
+  :root[data-theme="dark"] {
+    --color-ink-soft: #e5e5ea;
+    --color-hairline: #8e8e93;
+  }
+  .material-chrome {
+    background: var(--color-canvas);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .card {
+    box-shadow: none;
+  }
 }

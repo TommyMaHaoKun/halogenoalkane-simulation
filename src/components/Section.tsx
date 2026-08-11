@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
+import { reveal } from "../lib/motion";
 
 export function Section({
   id,
@@ -16,35 +17,30 @@ export function Section({
   wash?: boolean;
   children: ReactNode;
 }) {
+  const reduced = useReducedMotion();
+
   return (
     <section
       id={id}
-      className="scroll-mt-16 py-24 sm:py-28"
+      className="scroll-mt-20 py-20 sm:py-28"
       style={{ background: wash ? "var(--color-mist)" : "transparent" }}
     >
-      <div className="mx-auto max-w-5xl px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
-        >
+      <div className="mx-auto max-w-5xl px-5 sm:px-6">
+        <motion.div {...reveal(reduced)}>
           {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent)]">
-              {eyebrow}
-            </p>
+            <p className="type-label text-[var(--color-accent)]">{eyebrow}</p>
           )}
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-            {title}
-          </h2>
+          <h2 className="type-title mt-3">{title}</h2>
           {lead && (
-            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--color-ink-soft)]">
+            <p className="type-lead mt-4 max-w-2xl text-[var(--color-ink-soft)]">
               {lead}
             </p>
           )}
         </motion.div>
 
-        <div className="mt-12">{children}</div>
+        <motion.div {...reveal(reduced, 20)} className="mt-10">
+          {children}
+        </motion.div>
       </div>
     </section>
   );

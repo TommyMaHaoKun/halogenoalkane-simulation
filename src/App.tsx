@@ -26,6 +26,7 @@ export default function App() {
           lead="Chlorine and ethane react by radical substitution. Because radicals carry a single unpaired electron, every step moves electrons one at a time — shown here with fishhook arrows."
           mechanism={radicalSubstitution}
           accent="#f5a623"
+          /* amber: matches the unpaired-electron dots this mechanism is about */
           note="At SL you are expected to know this mechanism in three stages — initiation, propagation and termination — and to write equations for each step."
         />
 
@@ -35,7 +36,7 @@ export default function App() {
           title="How chloroethane reacts"
           lead="Warmed with aqueous hydroxide, chloroethane undergoes nucleophilic substitution. A lone pair attacks the δ+ carbon and the C–Cl bond breaks heterolytically — a pair of electrons at a time, shown with curly arrows."
           mechanism={nucleophilicSubstitution}
-          accent="#0071e3"
+          accent="var(--color-accent)"
           note="At SL the reaction and its equation are assessed, but the detailed SN1/SN2 mechanism is HL. The curly arrows here show the electron-pair sharing and heterolytic fission that the SL course does cover."
           wash
         />

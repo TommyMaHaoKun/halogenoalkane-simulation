@@ -1,6 +1,7 @@
 import { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import { useReducedMotion } from "framer-motion";
 import * as THREE from "three";
 import { ELEMENTS, type Molecule } from "../data/molecules";
 
@@ -35,17 +36,18 @@ function Bond({
   return (
     <mesh position={mid.toArray()} quaternion={quat}>
       <cylinderGeometry args={[0.08, 0.08, len, 24]} />
-      <meshStandardMaterial color="#c9c9cf" roughness={0.5} metalness={0.05} />
+      {/* mid grey reads correctly against both a white and a black canvas */}
+      <meshStandardMaterial color="#a8a8b0" roughness={0.5} metalness={0.05} />
     </mesh>
   );
 }
 
-function Model({ mol }: { mol: Molecule }) {
+function Model({ mol, spin }: { mol: Molecule; spin: boolean }) {
   const group = useRef<THREE.Group>(null);
   const positions = useMemo(() => centre(mol), [mol]);
 
   useFrame((_, delta) => {
-    if (group.current) group.current.rotation.y += delta * 0.35;
+    if (spin && group.current) group.current.rotation.y += delta * 0.3;
   });
 
   return (
@@ -68,6 +70,8 @@ function Model({ mol }: { mol: Molecule }) {
 }
 
 export default function Molecule3D({ mol }: { mol: Molecule }) {
+  // A slow, continuous rotation is exactly the kind of motion to drop here.
+  const reduced = useReducedMotion();
   return (
     <Canvas
       camera={{ position: [0, 0, 6], fov: 42 }}
@@ -77,7 +81,7 @@ export default function Molecule3D({ mol }: { mol: Molecule }) {
       <ambientLight intensity={0.75} />
       <directionalLight position={[4, 6, 5]} intensity={1.1} />
       <directionalLight position={[-5, -3, -4]} intensity={0.3} />
-      <Model mol={mol} />
+      <Model mol={mol} spin={!reduced} />
       <OrbitControls
         enablePan={false}
         enableZoom
