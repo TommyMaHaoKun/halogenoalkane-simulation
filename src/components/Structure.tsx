@@ -145,13 +145,17 @@ export default function Structure() {
             <p className="type-label text-[var(--color-ink-faint)]">
               Molecular
             </p>
-            <p className="type-heading mt-2">{identity.molecular}</p>
+            <p className="type-equation mt-2" style={{ fontSize: "1.0625rem" }}>
+              {identity.molecular}
+            </p>
           </div>
           <div className="card p-5">
             <p className="type-label text-[var(--color-ink-faint)]">
               Condensed
             </p>
-            <p className="type-heading mt-2">{identity.condensed}</p>
+            <p className="type-equation mt-2" style={{ fontSize: "1.0625rem" }}>
+              {identity.condensed}
+            </p>
           </div>
 
           <div className="card p-5">

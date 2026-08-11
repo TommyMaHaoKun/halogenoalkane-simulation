@@ -304,7 +304,7 @@ export default function MechanismPlayer({
           <h4 className="type-heading">{step.title}</h4>
           {step.equation && (
             <p
-              className="type-caption mt-1.5 inline-block rounded-md px-2 py-1 font-bold"
+              className="type-equation mt-2 inline-block rounded-md px-2.5 py-1"
               style={{ background: "var(--color-mist)" }}
             >
               {step.equation}

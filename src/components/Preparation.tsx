@@ -15,7 +15,7 @@ export default function Preparation() {
           <div key={p.title} className="card flex flex-col p-6">
             <h3 className="type-heading">{p.title}</h3>
             <p
-              className="type-caption mt-3 rounded-lg px-3 py-2 font-bold"
+              className="type-equation mt-3 rounded-lg px-3 py-2.5"
               style={{ background: "var(--color-mist)" }}
             >
               {p.equation}
